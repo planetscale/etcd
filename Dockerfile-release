@@ -1,17 +1,24 @@
-FROM alpine:latest
+FROM registry.access.redhat.com/ubi7/ubi-minimal:latest
+
+ENV USER_UID=1001
 
 ADD etcd /usr/local/bin/
 ADD etcdctl /usr/local/bin/
 RUN mkdir -p /var/etcd/
+RUN chmod 700 /var/etcd
+RUN chown 1001 /var/etcd
 RUN mkdir -p /var/lib/etcd/
+RUN chmod 700 /var/lib/etcd
+RUN chown 1001 /var/lib/etcd
 
-# Alpine Linux doesn't use pam, which means that there is no /etc/nsswitch.conf,
-# but Golang relies on /etc/nsswitch.conf to check the order of DNS resolving
-# (see https://github.com/golang/go/commit/9dee7771f561cf6aee081c0af6658cc81fac3918)
-# To fix this we just create /etc/nsswitch.conf and add the following line:
-RUN echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
+RUN mkdir -p ${HOME}
+RUN chown ${USER_UID}:0 ${HOME}
+RUN chmod ug+rwx ${HOME}
+RUN chmod g+rw /etc/passwd
 
 EXPOSE 2379 2380
+
+USER ${USER_UID}
 
 # Define default command.
 CMD ["/usr/local/bin/etcd"]
