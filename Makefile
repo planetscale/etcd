@@ -187,6 +187,7 @@ docker-test-coverage:
 build-docker-release-master:
 	$(info ETCD_VERSION: $(ETCD_VERSION))
 	cp ./Dockerfile-release ./bin/Dockerfile-release
+	cp ./LICENSE ./bin/
 	docker build \
 	  --tag gcr.io/etcd-development/etcd:$(ETCD_VERSION) \
 	  --file ./bin/Dockerfile-release \

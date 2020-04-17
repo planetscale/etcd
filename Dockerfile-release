@@ -2,8 +2,22 @@ FROM registry.access.redhat.com/ubi7/ubi-minimal:latest
 
 ENV USER_UID=1001
 
+LABEL name="PlanetScaleDB Operator etcd" \
+      io.k8s.display-name="PlanetScaleDB Operator etcd" \
+      maintainer="planetscaledboperator@planetscale.com" \
+      vendor="PlanetScale, Inc." \
+      version="3.3.20" \
+      release="1" \
+      summary="etcd container for PlanetScaleDB Operator" \
+      description="etcd container for PlanetScaleDB Operator" \
+      io.k8s.description="etcd container for PlanetScaleDB Operator" \
+      distribution-scope="private" \
+      url="https://planetscale.com"
+
 ADD etcd /usr/local/bin/
 ADD etcdctl /usr/local/bin/
+RUN mkdir -p /licenses
+COPY LICENSE /licenses
 RUN mkdir -p /var/etcd/
 RUN chmod 700 /var/etcd
 RUN chown 1001 /var/etcd
