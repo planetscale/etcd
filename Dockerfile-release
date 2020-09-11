@@ -1,6 +1,9 @@
-FROM registry.access.redhat.com/ubi7/ubi-minimal:latest
+FROM registry.access.redhat.com/ubi7/ubi:latest
 
 ENV USER_UID=1001
+ENV USER_GID=1001
+
+RUN groupadd -g ${USER_GID} -r etcd && useradd -r -u ${USER_UID} -g etcd etcd
 
 LABEL name="PlanetScaleDB Operator etcd" \
       io.k8s.display-name="PlanetScaleDB Operator etcd" \
@@ -20,10 +23,10 @@ RUN mkdir -p /licenses
 COPY LICENSE /licenses
 RUN mkdir -p /var/etcd/
 RUN chmod 700 /var/etcd
-RUN chown 1001 /var/etcd
+RUN chown etcd:etcd /var/etcd
 RUN mkdir -p /var/lib/etcd/
 RUN chmod 700 /var/lib/etcd
-RUN chown 1001 /var/lib/etcd
+RUN chown etcd:etcd /var/lib/etcd
 
 RUN mkdir -p ${HOME}
 RUN chown ${USER_UID}:0 ${HOME}
@@ -32,7 +35,7 @@ RUN chmod g+rw /etc/passwd
 
 EXPOSE 2379 2380
 
-USER ${USER_UID}
+USER etcd
 
 # Define default command.
 CMD ["/usr/local/bin/etcd"]
